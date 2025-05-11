@@ -3,6 +3,7 @@ import MonthSelector from './MonthSelector';
 import ExpenseTable from './ExpenseTable';
 import CategoryPieChart from './CategoryPieChart';
 import AddExpenseForm from './AddExpenseForm';
+import EditExpenseModal from './EditExpenseModal'; // Import the modal
 import { db } from '../firebaseConfig';
 import { collection, getDocs, query, orderBy, where, doc, setDoc } from 'firebase/firestore'; // Added doc, setDoc
 import '../styles/Dashboard.css';
@@ -16,6 +17,8 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
   const [error, setError] = useState('');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Default to current month
   const currentYear = new Date().getFullYear();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState(null);
 
   // Function to save/update user profile in Firestore (optional)
   const updateUserProfile = useCallback(async (user) => {
@@ -82,12 +85,33 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
     fetchExpenses(); // Re-fetch expenses when a new one is added
   };
 
+  const handleOpenEditModal = (expense) => {
+    setSelectedExpense(expense);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setSelectedExpense(null);
+    setIsEditModalOpen(false);
+  };
+
+  const handleExpenseUpdated = () => {
+    fetchExpenses();
+    handleCloseEditModal();
+  };
+
+  const handleExpenseDeleted = () => {
+    fetchExpenses();
+    handleCloseEditModal();
+  };
+
   return (
     <div className="dashboard-container">
      
       <header className="dashboard-header">
         <div className="header-left">
-          <h1>Expense Tracker</h1>
+          <h1>SpendWise</h1>
+         
           {currentUser && <p className="welcome-message">Welcome, {currentUser.displayName || currentUser.email}!</p>}
         </div>
         <div className="header-right">
@@ -104,7 +128,7 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
             <h2>Transactions (Month: {selectedMonth}/{currentYear})</h2>
             {loading && <div className="loading-placeholder"><p>Loading Expenses...</p></div>}
             {error && <p className="error-message">{error}</p>}
-            {!loading && !error && <ExpenseTable expenses={filteredExpenses} />}
+            !loading && !error && <ExpenseTable expenses={filteredExpenses} onRowClick={handleOpenEditModal} />
           </div>
           <div className="chart-section">
             <h2>Spending by Category (Month: {selectedMonth}/{currentYear})</h2>
@@ -115,6 +139,15 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
         </div>
         
       </main>
+      {isEditModalOpen && selectedExpense && (
+        <EditExpenseModal
+          expense={selectedExpense}
+          onClose={handleCloseEditModal}
+          onSave={handleExpenseUpdated}
+          onDelete={handleExpenseDeleted}
+          userId={currentUser?.uid}
+        />
+      )}
       <div className="footer">
         Made with 💖 by <a href="https://www.linkedin.com/in/hariharen9/" target="_blank" rel="noopener noreferrer">Hariharen</a> © 2025
       </div>

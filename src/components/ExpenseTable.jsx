@@ -1,7 +1,7 @@
 import React from 'react';
 // import '../styles/ExpenseTable.css'; // Styles will be in Dashboard.css for now
 
-const ExpenseTable = ({ expenses }) => {
+const ExpenseTable = ({ expenses, onRowClick }) => {
   if (!expenses || expenses.length === 0) {
     return <p>No expenses to display.</p>;
   }
@@ -20,7 +20,7 @@ const ExpenseTable = ({ expenses }) => {
         </thead>
         <tbody>
           {expenses.map((expense) => (
-            <tr key={expense.id}>
+            <tr key={expense.id} onClick={() => onRowClick(expense)} style={{ cursor: 'pointer' }}>
               <td>{expense.name}</td>
               <td>₹{expense.amount.toFixed(2)}</td>
               <td>{expense.date}</td>

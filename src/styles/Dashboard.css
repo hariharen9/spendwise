@@ -516,6 +516,162 @@ body {
   }
 }
 
+/* Edit Expense Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  background: var(--card-bg);
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 500px;
+  animation: slideInUp 0.4s ease-out;
+  position: relative;
+}
+
+.edit-expense-modal h3 {
+  color: var(--text-color);
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.6em;
+  font-weight: 600;
+  text-align: center;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.edit-expense-modal h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 3px;
+}
+
+.edit-expense-modal form div {
+  margin-bottom: 18px;
+}
+
+.edit-expense-modal label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+.edit-expense-modal input[type="text"],
+.edit-expense-modal input[type="number"],
+.edit-expense-modal input[type="date"],
+.edit-expense-modal select,
+.edit-expense-modal textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--input-border);
+  background-color: white;
+  color: var(--text-color);
+  font-family: var(--font-family);
+  font-size: 0.95em;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.edit-expense-modal input:focus,
+.edit-expense-modal select:focus,
+.edit-expense-modal textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+.edit-expense-modal textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.modal-actions button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: 0.9em;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-actions .save-button {
+  background: var(--primary-color);
+  color: white;
+}
+
+.modal-actions .save-button:hover {
+  background: var(--secondary-color);
+  transform: translateY(-1px);
+}
+
+.modal-actions .delete-button {
+  background: var(--error-color);
+  color: white;
+}
+
+.modal-actions .delete-button:hover {
+  background: #c0392b; /* Darker red */
+  transform: translateY(-1px);
+}
+
+.modal-actions .cancel-button {
+  background: var(--input-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--input-border);
+}
+
+.modal-actions .cancel-button:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+  transform: translateY(-1px);
+}
+
+/* Success Modal (re-using from AddExpenseForm for consistency if needed, or can be specific) */
+.success-modal {
+  padding: 20px;
+  text-align: center;
+}
+.success-modal p {
+  font-size: 1.1em;
+  color: var(--success-color);
+  font-weight: 500;
+}
+
+
 @media (max-width: 768px) {
   body {
     padding: 8px;
