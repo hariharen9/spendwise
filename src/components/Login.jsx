@@ -44,7 +44,7 @@ const Login = ({ setUser }) => {
     <div className="login-container">
       <div className="login-box">
         <h2>Welcome to SpendWise!</h2>
-        <img src="./Assets/icon-money.svg" alt="SpendWise Logo" />
+        <img src="https://www.reshot.com/preview-assets/icons/ZED7VSP4CJ/money-ZED7VSP4CJ.svg" alt="SpendWise Logo" />
         <p>Please sign in to continue</p>
         <button onClick={handleGoogleSignIn} className="google-signin-button">
           <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo" />
