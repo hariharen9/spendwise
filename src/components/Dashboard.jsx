@@ -7,6 +7,8 @@ import { db } from '../firebaseConfig';
 import { collection, getDocs, query, orderBy, where, doc, setDoc } from 'firebase/firestore'; // Added doc, setDoc
 import '../styles/Dashboard.css';
 
+import '../styles/Footer.css';
+
 const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLogout props
   const [expenses, setExpenses] = useState([]);
   const [filteredExpenses, setFilteredExpenses] = useState([]);
@@ -82,6 +84,7 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
 
   return (
     <div className="dashboard-container">
+     
       <header className="dashboard-header">
         <div className="header-left">
           <h1>Expense Tracker</h1>
@@ -110,7 +113,11 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
             {!loading && !error && <CategoryPieChart expenses={filteredExpenses} />}
           </div>
         </div>
+        
       </main>
+      <div className="footer">
+        Made with 💖 by <a href="https://www.linkedin.com/in/hariharen9/" target="_blank" rel="noopener noreferrer">Hariharen</a> © 2025
+      </div>
     </div>
   );
 };

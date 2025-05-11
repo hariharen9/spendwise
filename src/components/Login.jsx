@@ -1,5 +1,7 @@
 import React from 'react';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+
+import '../styles/Footer.css';
 import { db } from '../firebaseConfig'; // Assuming firebaseConfig exports db and auth is initialized there or separately
 // You might need to initialize auth if not done in firebaseConfig.js
 // import { initializeApp } from 'firebase/app';
@@ -41,15 +43,22 @@ const Login = ({ setUser }) => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2>Welcome to Expense Tracker</h2>
+        <h2>Welcome to SpendWise!</h2>
+        <img src="./Assets/icon-money.svg" alt="SpendWise Logo" />
         <p>Please sign in to continue</p>
         <button onClick={handleGoogleSignIn} className="google-signin-button">
           <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo" />
           Sign in with Google
         </button>
+        <div className="footer">
+        Made with 💖 by <a href="https://www.linkedin.com/in/hariharen9/" target="_blank" rel="noopener noreferrer">Hariharen</a> © 2025
+      </div>
       </div>
     </div>
   );
 };
+
+
+
 
 export default Login;
