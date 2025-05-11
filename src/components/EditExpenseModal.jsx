@@ -10,7 +10,7 @@ const EditExpenseModal = ({ expense, onClose, onSave, onDelete, userId }) => {
   const [comments, setComments] = useState('');
   const [error, setError] = useState('');
 
-  const categories = ['Food', 'Home', 'Transport', 'Utilities', 'Entertainment', 'Health', 'Shopping', 'Others'];
+  const categories = ['Food', 'Home', 'Transport', 'Utilities', 'Entertainment', 'Health', 'Shopping', 'Fuel', 'Investments', 'EMI', 'Others'];
 
   useEffect(() => {
     if (expense) {

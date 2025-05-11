@@ -21,7 +21,17 @@ const AddExpenseForm = ({ onExpenseAdded, userId }) => { // Added userId prop
     }
   }, [success]);
 
-  const categories = ['Food', 'Home', 'Transport', 'Utilities', 'Entertainment', 'Health', 'Shopping', 'Others'];
+  const [categories, setCategories] = useState(['Food', 'Home', 'Transport', 'Utilities', 'Entertainment', 'Health', 'Shopping','Fuel', 'Investments', 'EMI', 'Others']);
+  
+  useEffect(() => {
+    const savedCategories = localStorage.getItem('customCategories');
+    if (savedCategories) {
+      const defaultCategories = ['Food', 'Home', 'Transport', 'Utilities', 'Entertainment', 'Health', 'Shopping','Fuel', 'Investments', 'EMI', 'Others'];
+      setCategories([...defaultCategories, ...JSON.parse(savedCategories)]);
+    }
+  }, []);
+  const [customCategory, setCustomCategory] = useState('');
+  const [showCustomInput, setShowCustomInput] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,17 +61,26 @@ const AddExpenseForm = ({ onExpenseAdded, userId }) => { // Added userId prop
         name,
         amount: expenseAmount,
         date,
-        category,
+        category: showCustomInput ? customCategory : category,
+        isCustom: showCustomInput,
         comments,
         createdAt: serverTimestamp() // Optional: for sorting by creation time
       });
       setSuccess('Expense added successfully!');
+      // Save custom category if it's new
+      if (showCustomInput && !categories.includes(customCategory)) {
+        const updatedCategories = [...categories, customCategory];
+        setCategories(updatedCategories);
+        localStorage.setItem('customCategories', JSON.stringify(updatedCategories.filter(cat => !['Food', 'Home', 'Transport', 'Utilities', 'Entertainment', 'Health', 'Shopping','Fuel', 'Investments', 'EMI', 'Others'].includes(cat))));
+      }
       // Clear form
       setName('');
       setAmount('');
       setDate(new Date().toISOString().split('T')[0]);
       setCategory('Food');
       setComments('');
+      setShowCustomInput(false);
+      setCustomCategory('');
       if (onExpenseAdded) {
         onExpenseAdded(); // Callback to refresh expense list in Dashboard
       }
@@ -117,11 +136,27 @@ const AddExpenseForm = ({ onExpenseAdded, userId }) => { // Added userId prop
         </div>
         <div>
           <label htmlFor="category">Category:</label>
-          <select id="category" value={category} onChange={(e) => setCategory(e.target.value)} required>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
+          {showCustomInput ? (
+            <input
+              type="text"
+              id="custom-category"
+              value={customCategory}
+              onChange={(e) => setCustomCategory(e.target.value)}
+              required
+              placeholder="Enter custom category"
+            />
+          ) : (
+            <select id="category" value={category} onChange={(e) => {
+              setCategory(e.target.value);
+              if (e.target.value === 'Others') {
+                setShowCustomInput(true);
+              }
+            }} required>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          )}
         </div>
         <div>
           <label htmlFor="comments">Comments (Optional):</label>
