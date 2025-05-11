@@ -1,6 +1,6 @@
 # SpendWise - Expense Tracker Demo
 
-![SpendWise Logo](./Assets/icon-money.svg)
+<img src="./Assets/icon-money.svg" width=100px />
 
 ## Project Showcase
 This is a demonstration of the SpendWise expense tracking application featuring:
