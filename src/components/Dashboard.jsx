@@ -128,7 +128,7 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
             <h2>Transactions (Month: {selectedMonth}/{currentYear})</h2>
             {loading && <div className="loading-placeholder"><p>Loading Expenses...</p></div>}
             {error && <p className="error-message">{error}</p>}
-            !loading && !error && <ExpenseTable expenses={filteredExpenses} onRowClick={handleOpenEditModal} />
+           <ExpenseTable expenses={filteredExpenses} onRowClick={handleOpenEditModal} />
           </div>
           <div className="chart-section">
             <h2>Spending by Category (Month: {selectedMonth}/{currentYear})</h2>
