@@ -1,12 +1,31 @@
-# React + Vite
+# SpendWise - Expense Tracker Demo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![SpendWise Logo](./Assets/icon-money.svg)
 
-Currently, two official plugins are available:
+## Project Showcase
+This is a demonstration of the SpendWise expense tracking application featuring:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Modern UI with responsive design
+- Interactive expense visualization
+- Google authentication integration
+- Real-time data updates
 
-## Expanding the ESLint configuration
+## Key Features
+- Monthly expense tracking
+- Category-based spending breakdown
+- Intuitive expense entry form
+- Secure user authentication
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Technology Stack
+- React.js with Vite
+- Firebase for backend services
+- Chart.js for data visualization
+- CSS Modules for styling
+
+## Screenshots
+ //Tobe added
+
+## Demo Notes
+This is a showcase version not intended for production use.
+
+Created by [Hariharen](https://www.linkedin.com/in/hariharen9/)
