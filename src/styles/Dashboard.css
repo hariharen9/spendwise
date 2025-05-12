@@ -198,14 +198,19 @@ body {
 /* Month Selector Styles */
 .month-selector-container {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
   background: var(--input-bg);
   padding: 12px 15px;
   border-radius: 8px;
   margin-bottom: 20px;
   transition: all 0.3s ease;
   animation: scaleUp 0.5s ease-out;
+}
+
+.month-selector-container > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .month-selector-container label {

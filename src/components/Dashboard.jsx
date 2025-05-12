@@ -33,7 +33,7 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `expenses_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `SpendWise_Expenses_${selectedYear}-${selectedMonth.toString().padStart(2, '0')}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -43,7 +43,7 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Default to current month
-  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Default to current year
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
 
@@ -95,18 +95,18 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
   }, [fetchExpenses]);
 
   useEffect(() => {
-    // Filter expenses based on selectedMonth and currentYear
+    // Filter expenses based on selectedMonth and selectedYear
     if (expenses.length > 0) {
       const monthStr = selectedMonth.toString().padStart(2, '0'); // e.g., 7 -> "07"
-      const yearStr = currentYear.toString();
+      const yearStr = selectedYear.toString();
 
       const filtered = expenses.filter(expense => {
         const expenseDate = new Date(expense.date);
-        return expenseDate.getFullYear() === currentYear && (expenseDate.getMonth() + 1) === selectedMonth;
+        return expenseDate.getFullYear() === selectedYear && (expenseDate.getMonth() + 1) === selectedMonth;
       });
       setFilteredExpenses(filtered);
     }
-  }, [expenses, selectedMonth, currentYear]);
+  }, [expenses, selectedMonth, selectedYear]);
 
   const handleExpenseAdded = () => {
     fetchExpenses(); // Re-fetch expenses when a new one is added
@@ -142,9 +142,14 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
           {currentUser && <p className="welcome-message">Welcome, {currentUser.displayName || currentUser.email}!</p>}
         </div>
         <div className="header-right">
-          <MonthSelector selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} />
+          <MonthSelector 
+            selectedMonth={selectedMonth} 
+            setSelectedMonth={setSelectedMonth} 
+            selectedYear={selectedYear}
+            setSelectedYear={setSelectedYear}
+          />
           {currentUser && <button className="export-button" onClick={() => exportToCSV(filteredExpenses)}>
-            Export CSV
+            Export
           </button>}
           {currentUser && <button onClick={onLogout} className="logout-button">Logout</button>}
         </div>
@@ -155,13 +160,13 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
         </div>
         <div className="content-area"> {/* New wrapper for table and chart */}
           <div className="expenses-section">
-            <h2>Transactions (Month: {selectedMonth}/{currentYear})</h2>
+            <h2>Transactions (Month: {selectedMonth}/{selectedYear})</h2>
             {loading && <div className="loading-placeholder"><p>Loading Expenses...</p></div>}
             {error && <p className="error-message">{error}</p>}
            <ExpenseTable expenses={filteredExpenses} onRowClick={handleOpenEditModal} />
           </div>
           <div className="chart-section">
-            <h2>Spending by Category (Month: {selectedMonth}/{currentYear})</h2>
+            <h2>Spending by Category (Month: {selectedMonth}/{selectedYear})</h2>
             {loading && <div className="loading-placeholder"><p>Loading Chart Data...</p></div>} {/* Optional: separate loading for chart */}
             {error && <p className="error-message">{error}</p>} {/* You might want a specific chart error message */}
             {!loading && !error && <CategoryPieChart expenses={filteredExpenses} />}
