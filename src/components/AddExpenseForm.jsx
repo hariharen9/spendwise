@@ -16,7 +16,7 @@ const AddExpenseForm = ({ onExpenseAdded, userId }) => { // Added userId prop
     if (success) {
       const timer = setTimeout(() => {
         setSuccess('');
-      }, 3000); // Hide after 3 seconds
+      }, 2000); // Hide after 2 seconds
       return () => clearTimeout(timer); // Cleanup timer on component unmount or if success changes
     }
   }, [success]);
