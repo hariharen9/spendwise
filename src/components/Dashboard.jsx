@@ -11,6 +11,33 @@ import '../styles/Dashboard.css';
 import '../styles/Footer.css';
 
 const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLogout props
+  const exportToCSV = (expenses) => {
+    if (!expenses || expenses.length === 0) {
+      alert('No expenses to export');
+      return;
+    }
+    
+    const headers = ['Name', 'Amount', 'Date', 'Category', 'Comments'];
+    const csvContent = [
+      headers.join(','),
+      ...expenses.map(expense => [
+        `"${expense.name}"`,
+        expense.amount,
+        expense.date,
+        `"${expense.category}"`,
+        expense.comments ? `"${expense.comments}"` : ''
+      ].join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `expenses_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   const [expenses, setExpenses] = useState([]);
   const [filteredExpenses, setFilteredExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -116,6 +143,9 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
         </div>
         <div className="header-right">
           <MonthSelector selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} />
+          {currentUser && <button className="export-button" onClick={() => exportToCSV(filteredExpenses)}>
+            Export CSV
+          </button>}
           {currentUser && <button onClick={onLogout} className="logout-button">Logout</button>}
         </div>
       </header>
