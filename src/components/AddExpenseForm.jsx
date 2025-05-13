@@ -7,6 +7,7 @@ const AddExpenseForm = ({ onExpenseAdded, userId }) => { // Added userId prop
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Default to today
   const [category, setCategory] = useState('Food'); // Default category
+  const [isIncome, setIsIncome] = useState(false); // false for expense, true for income
   const [comments, setComments] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -63,6 +64,7 @@ const AddExpenseForm = ({ onExpenseAdded, userId }) => { // Added userId prop
         date,
         category: showCustomInput ? customCategory : category,
         isCustom: showCustomInput,
+        isIncome,
         comments,
         createdAt: serverTimestamp() // Optional: for sorting by creation time
       });
@@ -92,7 +94,7 @@ const AddExpenseForm = ({ onExpenseAdded, userId }) => { // Added userId prop
 
   return (
     <div className="add-expense-form-container">
-      <h3>Add New Expense</h3>
+      <h3>Add Transaction</h3>
       {error && <p className="error-message">{error}</p>}
       {success && (
         <div className="modal-overlay">
@@ -165,8 +167,40 @@ const AddExpenseForm = ({ onExpenseAdded, userId }) => { // Added userId prop
             value={comments}
             onChange={(e) => setComments(e.target.value)}
           />
+          </div>
+        <div style={{display: 'flex', marginBottom: '20px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--input-border)'}}>
+          <button 
+            type="button" 
+            style={{
+              flex: 1,
+              padding: '10px',
+              background: !isIncome ? 'var(--primary-color)' : 'var(--input-bg)',
+              color: !isIncome ? 'white' : 'var(--text-color)',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: '600'
+            }}
+            onClick={() => setIsIncome(false)}
+          >
+            Expense
+          </button>
+          <button 
+            type="button" 
+            style={{
+              flex: 1,
+              padding: '10px',
+              background: isIncome ? 'var(--primary-color)' : 'var(--input-bg)',
+              color: isIncome ? 'white' : 'var(--text-color)',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: '600'
+            }}
+            onClick={() => setIsIncome(true)}
+          >
+            Income
+          </button>
         </div>
-        <button type="submit">Add Expense</button>
+        <button type="submit">Add {isIncome ? 'Income' : 'Expense'}</button>
       </form>
     </div>
   );

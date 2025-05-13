@@ -12,6 +12,7 @@ const ExpenseTable = ({ expenses, onRowClick }) => {
         <thead>
           <tr>
             <th>Name</th>
+            <th>Type</th>
             <th>Amount</th>
             <th>Date</th>
             <th>Category</th>
@@ -22,7 +23,8 @@ const ExpenseTable = ({ expenses, onRowClick }) => {
           {expenses.map((expense) => (
             <tr key={expense.id} onClick={() => onRowClick(expense)} style={{ cursor: 'pointer' }}>
               <td>{expense.name}</td>
-              <td>₹{expense.amount.toFixed(2)}</td>
+              <td>{expense.isIncome ? 'Income' : 'Expense'}</td>
+              <td style={{color: expense.isIncome ? '#4CAF50' : '#f44336'}}>₹{expense.amount.toFixed(2)}</td>
               <td>{expense.date}</td>
               <td>{expense.category}</td>
               <td>{expense.comments}</td>

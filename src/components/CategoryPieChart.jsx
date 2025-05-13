@@ -18,14 +18,34 @@ const CategoryPieChart = ({ expenses }) => {
     if (!expenses || expenses.length === 0) return { data: [], total: 0 };
 
     let totalExpenses = 0;
-    const categoryTotals = expenses.reduce((acc, expense) => {
-      acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
-      totalExpenses += expense.amount;
-      return acc;
-    }, {});
+    let totalIncome = 0;
+    const expenseCategories = {};
+    const incomeCategories = {};
+    
+    expenses.forEach(expense => {
+      if (expense.isIncome) {
+        incomeCategories[expense.category] = (incomeCategories[expense.category] || 0) + expense.amount;
+        totalIncome += expense.amount;
+      } else {
+        expenseCategories[expense.category] = (expenseCategories[expense.category] || 0) + expense.amount;
+        totalExpenses += expense.amount;
+      }
+    });
 
-    const data = Object.entries(categoryTotals).map(([name, value]) => ({ name, value: parseFloat(value.toFixed(2)) }));
-    return { data, total: parseFloat(totalExpenses.toFixed(2)) };
+    const expenseData = Object.entries(expenseCategories).map(([name, value]) => ({
+      name: `${name} (Expense)`,
+      value: parseFloat(value.toFixed(2)),
+      isIncome: false
+    }));
+    
+    const incomeData = Object.entries(incomeCategories).map(([name, value]) => ({
+      name: `${name} (Income)`,
+      value: parseFloat(value.toFixed(2)),
+      isIncome: true
+    }));
+    
+    const data = [...expenseData, ...incomeData];
+    return { data, total: parseFloat((totalIncome - totalExpenses).toFixed(2)) };
   };
 
   const { data: categoryData, total: totalAmountSpent } = getCategoryData();
@@ -76,8 +96,10 @@ const CategoryPieChart = ({ expenses }) => {
       </ResponsiveContainer>
       {categoryData.length > 0 && (
         <div className="total-expenses-display">
-          <h4>Total Spent This Month:</h4>
-          <p>₹{totalAmountSpent.toFixed(2)}</p>
+          <h4>Net Balance This Month:</h4>
+          <p style={{color: totalAmountSpent >= 0 ? '#4CAF50' : '#f44336'}}>
+            ₹{Math.abs(totalAmountSpent).toFixed(2)} {totalAmountSpent >= 0 ? '(Surplus)' : '(Deficit)'}
+          </p>
         </div>
       )}
     </div>
