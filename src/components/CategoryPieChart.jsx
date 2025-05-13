@@ -1,5 +1,5 @@
-import React from 'react';
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import React, { useState } from 'react';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
 
 // Define neon colors for chart segments, can be expanded or customized
 const NEON_COLORS = [
@@ -14,6 +14,7 @@ const NEON_COLORS = [
 ];
 
 const CategoryPieChart = ({ expenses }) => {
+  const [chartType, setChartType] = useState('pie');
   const getCategoryData = () => {
     if (!expenses || expenses.length === 0) return { data: [], total: 0 };
 
@@ -70,15 +71,35 @@ const CategoryPieChart = ({ expenses }) => {
 
   return (
     <div className="category-pie-chart-container">
-      <ResponsiveContainer width="100%" height={350}>
+      <div className="chart-type-selector">
+        <button 
+          className={chartType === 'pie' ? 'active' : ''}
+          onClick={() => setChartType('pie')}
+        >
+          Pie
+        </button>
+        <button 
+          className={chartType === 'bar' ? 'active' : ''}
+          onClick={() => setChartType('bar')}
+        >
+          Bar
+        </button>
+        <button 
+          className={chartType === 'line' ? 'active' : ''}
+          onClick={() => setChartType('line')}
+        >
+          Line
+        </button>
+      </div>
+      <ResponsiveContainer width="100%" height={300}>
+        {chartType === 'pie' && (
         <PieChart>
           <Pie
             data={categoryData}
             cx="50%"
             cy="50%"
             labelLine={false}
-            // label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-            outerRadius={120} // Adjusted outerRadius
+            outerRadius={120}
             fill="#8884d8"
             dataKey="value"
             nameKey="name"
@@ -93,6 +114,36 @@ const CategoryPieChart = ({ expenses }) => {
             formatter={(value, entry) => <span style={{ color: 'var(--text-color)' }}>{value}</span>}
           />
         </PieChart>
+      )}
+      
+      {chartType === 'bar' && (
+        <BarChart data={categoryData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip content={<CustomTooltip />} />
+          <Bar dataKey="value" fill="#8884d8">
+            {categoryData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={NEON_COLORS[index % NEON_COLORS.length]} />
+            ))}
+          </Bar>
+        </BarChart>
+      )}
+      
+      {chartType === 'line' && (
+        <LineChart data={categoryData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip content={<CustomTooltip />} />
+          <Line 
+            type="monotone" 
+            dataKey="value" 
+            stroke="#8884d8" 
+            activeDot={{ r: 8 }}
+          />
+        </LineChart>
+      )}
       </ResponsiveContainer>
       {categoryData.length > 0 && (
         <div className="total-expenses-display">

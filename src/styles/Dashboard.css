@@ -142,6 +142,66 @@ body {
 .add-expense-section {
   grid-area: form;
   animation: slideInLeft 0.7s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.summary-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.summary-card h3 {
+  color: var(--text-color);
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.2em;
+  font-weight: 600;
+  text-align: center;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.summary-card h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 3px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 1em;
+}
+
+.summary-item:last-child {
+  margin-bottom: 0;
+}
+
+.income-amount {
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.expense-amount {
+  color: var(--error-color);
+  font-weight: 600;
 }
 
 .content-area {
@@ -193,6 +253,37 @@ body {
   height: 3px;
   background: var(--primary-color);
   border-radius: 3px;
+}
+
+.chart-type-selector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+}
+
+.chart-type-selector button {
+  flex: 1;
+  padding: 10px;
+  background: var(--input-bg);
+  color: var(--text-color);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.chart-type-selector button.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.chart-type-selector button:hover {
+  background: var(--secondary-color);
+  color: white;
 }
 
 /* Month Selector Styles */

@@ -157,6 +157,21 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
       <main className="dashboard-main">
         <div className="add-expense-section">
           <AddExpenseForm onExpenseAdded={handleExpenseAdded} userId={currentUser?.uid} /> {/* Pass userId to form */}
+          <div className="summary-card">
+            <h3>Monthly Summary</h3>
+            <div className="summary-item">
+              <span>Total Income:</span>
+              <span className="income-amount">
+                ₹{filteredExpenses.reduce((sum, exp) => exp.isIncome ? sum + exp.amount : sum, 0).toFixed(2)}
+              </span>
+            </div>
+            <div className="summary-item">
+              <span>Total Expense:</span>
+              <span className="expense-amount">
+                ₹{filteredExpenses.reduce((sum, exp) => !exp.isIncome ? sum + exp.amount : sum, 0).toFixed(2)}
+              </span>
+            </div>
+          </div>
         </div>
         <div className="content-area"> {/* New wrapper for table and chart */}
           <div className="expenses-section">
