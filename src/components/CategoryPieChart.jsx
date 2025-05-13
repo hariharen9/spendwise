@@ -19,10 +19,13 @@ const CategoryPieChart = ({ expenses }) => {
     if (!expenses || expenses.length === 0) return { data: [], total: 0 };
 
     let totalExpenses = 0;
+    let totalIncome = 0;
     const expenseCategories = {};
     
     expenses.forEach(expense => {
-      if (!expense.isIncome) {
+      if (expense.isIncome) {
+        totalIncome += expense.amount;
+      } else {
         expenseCategories[expense.category] = (expenseCategories[expense.category] || 0) + expense.amount;
         totalExpenses += expense.amount;
       }
@@ -34,7 +37,7 @@ const CategoryPieChart = ({ expenses }) => {
       isIncome: false
     }));
     
-    return { data: expenseData, total: parseFloat(totalExpenses.toFixed(2)) };
+    return { data: expenseData, total: parseFloat(totalIncome - totalExpenses).toFixed(2) };
   };
 
   const { data: categoryData, total: totalAmountSpent } = getCategoryData();
