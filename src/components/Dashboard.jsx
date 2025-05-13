@@ -6,6 +6,7 @@ import AddExpenseForm from './AddExpenseForm';
 import EditExpenseModal from './EditExpenseModal'; // Import the modal
 import { db } from '../firebaseConfig';
 import { collection, getDocs, query, orderBy, where, doc, setDoc } from 'firebase/firestore'; // Added doc, setDoc
+import confetti from 'canvas-confetti';
 import '../styles/Dashboard.css';
 
 import '../styles/Footer.css';
@@ -157,7 +158,13 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
       <main className="dashboard-main">
         <div className="add-expense-section">
           <AddExpenseForm onExpenseAdded={handleExpenseAdded} userId={currentUser?.uid} /> {/* Pass userId to form */}
-          <div className="summary-card">
+          <div className="summary-card" onClick={() => {
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 }
+            });
+          }}>
             <h3>Monthly Summary</h3>
             <div className="summary-item">
               <span>Total Income:</span>
