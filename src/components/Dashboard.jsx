@@ -18,16 +18,25 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
       return;
     }
     
-    const headers = ['Name', 'Amount', 'Date', 'Category', 'Comments'];
+    const headers = ['"Name"', '"Amount"', '"Date"', '"Category"', '"Type"', '"Comments"'];
+    const totalIncome = expenses.reduce((sum, exp) => exp.isIncome ? sum + exp.amount : sum, 0);
+    const totalExpense = expenses.reduce((sum, exp) => !exp.isIncome ? sum + exp.amount : sum, 0);
+    const netBalance = totalIncome - totalExpense;
+    
     const csvContent = [
       headers.join(','),
       ...expenses.map(expense => [
         `"${expense.name}"`,
-        expense.amount,
+        expense.isIncome ? `"${expense.amount}"` : `"${expense.amount}"`,
         expense.date,
         `"${expense.category}"`,
+        expense.isIncome ? 'Income' : 'Expense',
         expense.comments ? `"${expense.comments}"` : ''
-      ].join(','))
+      ].join(',')),
+      '"","","","","",""',
+      '"Total Income","' + totalIncome.toFixed(2) + '","","","",""',
+      '"Total Expense","' + totalExpense.toFixed(2) + '","","","",""',
+      '"Net Balance","' + netBalance.toFixed(2) + '","","","",""'
     ].join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
