@@ -4,6 +4,7 @@ import ExpenseTable from './ExpenseTable';
 import CategoryPieChart from './CategoryPieChart';
 import AddExpenseForm from './AddExpenseForm';
 import EditExpenseModal from './EditExpenseModal'; // Import the modal
+import CreditCardSpends from './CreditCardSpends';
 import { db } from '../firebaseConfig';
 import { collection, getDocs, query, orderBy, where, doc, setDoc } from 'firebase/firestore'; // Added doc, setDoc
 import confetti from 'canvas-confetti';
@@ -147,7 +148,7 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
      
       <header className="dashboard-header">
         <div className="header-left">
-          <h1>SpendWise</h1>
+          <h1><span style={{color: '#ffce52'}}>Spend</span><span style={{color: '#78b300'}}>Wise</span></h1>
          
           {currentUser && <p className="welcome-message">Welcome, {currentUser.displayName || currentUser.email}!</p>}
         </div>
@@ -205,6 +206,7 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
         </div>
         
       </main>
+      <CreditCardSpends currentUser={currentUser} />
       {isEditModalOpen && selectedExpense && (
         <EditExpenseModal
           expense={selectedExpense}

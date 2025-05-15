@@ -483,6 +483,63 @@ body {
   color: var(--text-secondary);
 }
 
+/* Credit Card Spends Component Styles */
+.credit-card-spends-container {
+  background-color: #b80505; /* Slightly different background */
+  margin: 20px 0;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.credit-card-spends-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 15px;
+}
+
+.credit-card-spends-header h3 {
+  margin: 0;
+  color: var(--accent-color);
+  font-size: 1.4em;
+}
+
+.credit-card-spends-header span {
+  font-size: 1.5em;
+  color: var(--text-secondary);
+}
+
+.credit-card-spends-content {
+  padding: 10px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Override for CC header to match dashboard header style if needed */
+.cc-header-override {
+  background: transparent; /* Or a slightly different shade from the container */
+  box-shadow: none;
+  padding: 10px 0; /* Adjust padding as it's inside a padded container */
+  margin-bottom: 20px;
+}
+
+.credit-card-form-container h4 {
+  font-size: 1.3em; /* Slightly smaller than main section titles */
+  color: var(--accent-color); /* Consistent accent color */
+}
+
+.credit-card-table-container table th {
+  background-color: #333333; /* Darker header for CC table */
+}
+
+.credit-card-pie-chart .total-expenses-display h4 {
+ color: var(--accent-color); /* Consistent accent color */
+}
+
+
 /* Total Expenses Display under Pie Chart */
 .total-expenses-display {
   margin-top: 20px;
@@ -812,6 +869,56 @@ body {
   transform: translateY(-1px);
 }
 
+/* Credit Card Spends Component */
+.credit-card-spends-container {
+  background: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: 0 4px 20px var(--card-shadow);
+  margin: 20px 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  padding-top: 30px;
+}
+
+.credit-card-spends-content {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+}
+
+.credit-card-spends-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.credit-card-spends-header {
+  padding: 20px 25px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(108, 142, 255, 0.1);
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+
+.credit-card-spends-header h3 {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.credit-card-spends-header span {
+  font-size: 1.5em;
+  color: var(--primary-color);
+}
+
+.credit-card-spends-content {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-color);
+}
+
 /* Success Modal (re-using from AddExpenseForm for consistency if needed, or can be specific) */
 .success-modal {
   padding: 20px;
@@ -821,6 +928,104 @@ body {
   font-size: 1.1em;
   color: var(--success-color);
   font-weight: 500;
+}
+
+/* Add any additional specific styles for components if needed */
+
+/* Styles for EditCreditCardSpendModal - similar to EditExpenseModal but can be customized */
+.edit-credit-card-spend-modal .modal-content {
+  /* Inherits .edit-expense-modal styles, add overrides if needed */
+  border-top: 5px solid #ff8c00; /* Example: Orange top border for CC edit modal */
+}
+
+.edit-credit-card-spend-modal h3 {
+  color: #ff8c00; /* Example: Orange title */
+}
+
+/* Override for the header within CreditCardSpends to ensure proper alignment if needed */
+.cc-header-override {
+  /* Adjust padding or margins if it doesn't align with the main dashboard header */
+  padding-top: 10px; /* Example adjustment */
+  padding-bottom: 10px; /* Example adjustment */
+}
+
+.cc-header-override .header-right .export-button {
+  background-color: #ff8c00; /* Orange for CC export */
+}
+
+.cc-header-override .header-right .export-button:hover {
+  background-color: #e67e00;
+}
+
+/* Input for adding new card */
+.new-card-input-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.new-card-input-container input[type="text"] {
+  flex-grow: 1;
+  margin-bottom: 0; /* Override default margin from .add-expense-form-container input */
+}
+
+.add-custom-btn {
+  padding: 10px 15px;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: 0.9em;
+  transition: background-color 0.3s ease;
+}
+
+.add-custom-btn:hover {
+  background-color: #3db8d8; /* Darker accent */
+}
+
+/* Specific styling for the summary card in credit card spends */
+.credit-card-spends-content .summary-card {
+  background: linear-gradient(135deg, #3a3a3a, #2c2c2c);
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  cursor: pointer; /* For confetti */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border-left: 5px solid #ff8c00; /* Orange accent */
+}
+
+.credit-card-spends-content .summary-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.credit-card-spends-content .summary-card h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.4em;
+  color: #ff8c00;
+}
+
+.credit-card-spends-content .summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.credit-card-spends-content .summary-item span:first-child {
+  color: #ccc;
+}
+
+.credit-card-spends-content .summary-item .expense-amount {
+  font-weight: bold;
+  font-size: 1.3em;
+  color: #ffc107; /* Gold color for amount */
 }
 
 
