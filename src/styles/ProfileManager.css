@@ -1,0 +1,180 @@
+/* ProfileManager.css */
+/* Using variables from :root (defined in Dashboard.css or index.css) */
+
+.profile-manager {
+  background-color: var(--card-bg); /* Use existing card background */
+  padding: 15px 20px; /* Adjusted padding */
+  border-radius: 10px; /* Consistent border radius */
+  box-shadow: 0 4px 15px var(--card-shadow); /* Consistent shadow */
+  color: var(--text-color);
+  font-family: var(--font-family);
+  margin-bottom: 20px;
+  animation: fadeIn 0.5s ease-out; /* Re-use existing animation */
+  max-width: 480px; /* Slightly wider for better layout */
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column; /* Main axis for children */
+  gap: 15px; /* Gap between child elements */
+}
+
+.profile-manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Removed margin-bottom as gap in parent handles spacing */
+}
+
+.profile-manager-header h3 {
+  margin: 0;
+  font-size: 1.3em; /* Adjusted size */
+  color: var(--text-color);
+  font-weight: 600; /* Match header styles */
+}
+
+.profile-selection-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.profile-selection-area label {
+  font-size: 0.9em;
+  color: var(--text-secondary); /* Use secondary text color for labels */
+  text-align: left;
+  font-weight: 500;
+}
+
+.profile-select {
+  width: 100%; /* Full width */
+  padding: 10px 12px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--input-border);
+  border-radius: 8px; /* Consistent border radius */
+  font-size: 0.95em; /* Adjusted font size */
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e0e0e0' width='18px' height='18px'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 35px; /* Ensure space for arrow */
+}
+
+.profile-select:hover {
+  border-color: var(--primary-color);
+}
+
+.profile-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-color); /* Consistent focus ring */
+}
+
+.add-profile-controls {
+  /* margin-top: 15px; Removed, parent gap handles spacing */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-profile-toggle-button {
+  padding: 10px 16px; /* Match general button padding */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: 0.9em; /* Match general button font size */
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease; /* Match general button transition */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: var(--primary-color);
+  color: white;
+  text-align: center;
+}
+
+.add-profile-toggle-button:hover {
+  background-color: var(--secondary-color);
+  transform: translateY(-2px); /* Match general button hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.add-profile-toggle-button.cancel-active {
+  background-color: var(--error-color); /* Use defined error color */
+  color: white;
+}
+
+.add-profile-toggle-button.cancel-active:hover {
+  background-color: #d32f2f; /* Darker shade of error color */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.add-profile-form {
+    display: flex;
+    gap: 10px;
+    align-items: stretch; /* Make items same height */
+}
+
+.add-profile-input {
+  flex-grow: 1;
+  padding: 10px 12px; /* Consistent padding */
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  font-size: 0.95em;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-profile-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.add-profile-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-color); /* Consistent focus ring */
+}
+
+.add-profile-submit-button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: 0.9em;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: var(--success-color); /* Use success color for submit */
+  color: white;
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+.add-profile-submit-button:hover {
+  background-color: #388E3C; /* Darker shade of success color */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.profile-manager-empty {
+  text-align: center;
+  padding: 15px;
+  color: var(--text-secondary);
+  font-style: italic;
+  opacity: 0.8;
+  background-color: rgba(0,0,0,0.03); /* Very subtle background for empty state */
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+}
+
+/* Re-using existing fadeIn animation if defined globally in App.css or index.css */
+/* @keyframes fadeIn { ... } */

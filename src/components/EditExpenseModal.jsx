@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
-const EditExpenseModal = ({ expense, onClose, onSave, onDelete, userId }) => {
+const EditExpenseModal = ({ expense, onClose, onSave, onDelete, userId, activeProfileCollectionName }) => {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState('');
@@ -57,8 +57,13 @@ const EditExpenseModal = ({ expense, onClose, onSave, onDelete, userId }) => {
       return;
     }
 
+    if (!activeProfileCollectionName) {
+      setError('No active account selected. Cannot save expense.');
+      return;
+    }
     try {
-      const expenseRef = doc(db, 'users', userId, 'expenses', expense.id);
+      const docPath = `users/${userId}/${activeProfileCollectionName}/${expense.id}`;
+      const expenseRef = doc(db, docPath);
       await updateDoc(expenseRef, {
         name,
         amount: expenseAmount,
@@ -84,9 +89,14 @@ const EditExpenseModal = ({ expense, onClose, onSave, onDelete, userId }) => {
       return;
     }
 
+    if (!activeProfileCollectionName) {
+      setError('No active account selected. Cannot delete expense.');
+      return;
+    }
     if (window.confirm('Are you sure you want to delete this expense?')) {
       try {
-        const expenseRef = doc(db, 'users', userId, 'expenses', expense.id);
+        const docPath = `users/${userId}/${activeProfileCollectionName}/${expense.id}`;
+        const expenseRef = doc(db, docPath);
         await deleteDoc(expenseRef);
         onDelete(); // Callback to refresh data and close modal
       } catch (err) {

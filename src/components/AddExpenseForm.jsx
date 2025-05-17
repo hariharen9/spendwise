@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
-const AddExpenseForm = ({ onExpenseAdded, userId }) => { // Added userId prop
+const AddExpenseForm = ({ onExpenseAdded, userId, activeProfileCollectionName }) => {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Default to today
@@ -55,9 +55,13 @@ const AddExpenseForm = ({ onExpenseAdded, userId }) => { // Added userId prop
       return;
     }
 
+    if (!activeProfileCollectionName) {
+      setError('No active account selected. Cannot add expense.');
+      return;
+    }
     try {
-      // Store expenses under users/{userId}/expenses
-      const expensesCollectionRef = collection(db, 'users', userId, 'expenses');
+      const collectionPath = `users/${userId}/${activeProfileCollectionName}`;
+      const expensesCollectionRef = collection(db, collectionPath);
       await addDoc(expensesCollectionRef, {
         name,
         amount: expenseAmount,

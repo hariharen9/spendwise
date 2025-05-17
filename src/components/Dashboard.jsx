@@ -3,16 +3,23 @@ import MonthSelector from './MonthSelector';
 import ExpenseTable from './ExpenseTable';
 import CategoryPieChart from './CategoryPieChart';
 import AddExpenseForm from './AddExpenseForm';
-import EditExpenseModal from './EditExpenseModal'; // Import the modal
+import EditExpenseModal from './EditExpenseModal';
 import CreditCardSpends from './CreditCardSpends';
 import { db } from '../firebaseConfig';
-import { collection, getDocs, query, orderBy, where, doc, setDoc } from 'firebase/firestore'; // Added doc, setDoc
+import { collection, getDocs, query, orderBy, doc, setDoc } from 'firebase/firestore'; // Removed 'where' as it's not used directly here
 import confetti from 'canvas-confetti';
 import '../styles/Dashboard.css';
-
 import '../styles/Footer.css';
+import ProfileManager from './ProfileManager'; // Import ProfileManager
 
-const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLogout props
+const Dashboard = ({ 
+  currentUser, 
+  onLogout, 
+  userProfiles, 
+  activeProfile, 
+  setActiveProfile, 
+  onAddProfile 
+}) => {
   const exportToCSV = (expenses) => {
     if (!expenses || expenses.length === 0) {
       alert('No expenses to export');
@@ -53,8 +60,8 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
   const [filteredExpenses, setFilteredExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Default to current month
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Default to current year
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
 
@@ -83,27 +90,32 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
   }, [currentUser, updateUserProfile]);
 
   const fetchExpenses = useCallback(async () => {
-    if (!currentUser) return; // Don't fetch if no user
+    if (!currentUser || !activeProfile || !activeProfile.collectionName) {
+      setExpenses([]); // Clear expenses if no active profile or user
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setError('');
     try {
-      // User-specific expenses path: users/{userId}/expenses
-      const expensesCollection = collection(db, 'users', currentUser.uid, 'expenses');
-      const q = query(expensesCollection, orderBy('date', 'desc'));
+      const expensesPath = `users/${currentUser.uid}/${activeProfile.collectionName}`;
+      const expensesCollectionRef = collection(db, expensesPath);
+      const q = query(expensesCollectionRef, orderBy('date', 'desc'));
       const querySnapshot = await getDocs(q);
       const expensesData = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       setExpenses(expensesData);
     } catch (err) {
-      console.error("Error fetching expenses: ", err);
-      setError('Failed to fetch expenses. Please try again.');
+      console.error(`Error fetching expenses from ${activeProfile.collectionName}: `, err);
+      setError(`Failed to fetch expenses for ${activeProfile.profileName}. Please try again.`);
+      setExpenses([]); // Clear expenses on error
     }
     setLoading(false);
-  }, []);
+  }, [currentUser, activeProfile]); // Depend on activeProfile
 
   useEffect(() => {
     fetchExpenses();
-  }, [fetchExpenses]);
+  }, [fetchExpenses]); // fetchExpenses itself depends on activeProfile, so this is fine
 
   useEffect(() => {
     // Filter expenses based on selectedMonth and selectedYear
@@ -149,10 +161,17 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
       <header className="dashboard-header">
         <div className="header-left">
           <h1><span style={{color: '#ffce52'}}>Spend</span><span style={{color: '#78b300'}}>Wise</span></h1>
-         
           {currentUser && <p className="welcome-message">Welcome, {currentUser.displayName || currentUser.email}!</p>}
         </div>
         <div className="header-right">
+          {currentUser && activeProfile && userProfiles && userProfiles.length > 0 && (
+            <ProfileManager 
+              userProfiles={userProfiles}
+              activeProfile={activeProfile}
+              setActiveProfile={setActiveProfile}
+              onAddProfile={onAddProfile}
+            />
+          )}
           <MonthSelector 
             selectedMonth={selectedMonth} 
             setSelectedMonth={setSelectedMonth} 
@@ -167,7 +186,12 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
       </header>
       <main className="dashboard-main">
         <div className="add-expense-section">
-          <AddExpenseForm onExpenseAdded={handleExpenseAdded} userId={currentUser?.uid} /> {/* Pass userId to form */}
+          {/* Pass activeProfile to AddExpenseForm for correct collection path */}
+          <AddExpenseForm 
+            onExpenseAdded={handleExpenseAdded} 
+            userId={currentUser?.uid} 
+            activeProfileCollectionName={activeProfile?.collectionName} 
+          />
           <div className="summary-card" onClick={() => {
             confetti({
               particleCount: 100,
@@ -214,6 +238,7 @@ const Dashboard = ({ currentUser, onLogout }) => { // Added currentUser and onLo
           onSave={handleExpenseUpdated}
           onDelete={handleExpenseDeleted}
           userId={currentUser?.uid}
+          activeProfileCollectionName={activeProfile?.collectionName} // Pass for correct collection path
         />
       )}
       <div className="footer">
