@@ -11,6 +11,7 @@ import confetti from 'canvas-confetti';
 import '../styles/Dashboard.css';
 import '../styles/Footer.css';
 import ProfileManager from './ProfileManager'; // Import ProfileManager
+import FilterModal from './FilterModal';
 
 const Dashboard = ({ 
   currentUser, 
@@ -64,6 +65,13 @@ const Dashboard = ({
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const allCategories = [...new Set(expenses.map(e => e.category))];
 
   // Function to save/update user profile in Firestore (optional)
   const updateUserProfile = useCallback(async (user) => {
@@ -118,18 +126,43 @@ const Dashboard = ({
   }, [fetchExpenses]); // fetchExpenses itself depends on activeProfile, so this is fine
 
   useEffect(() => {
-    // Filter expenses based on selectedMonth and selectedYear
-    if (expenses.length > 0) {
-      const monthStr = selectedMonth.toString().padStart(2, '0'); // e.g., 7 -> "07"
-      const yearStr = selectedYear.toString();
+    let filtered = expenses;
 
-      const filtered = expenses.filter(expense => {
+    // Filter by month and year first
+    if (expenses.length > 0) {
+      filtered = expenses.filter(expense => {
         const expenseDate = new Date(expense.date);
         return expenseDate.getFullYear() === selectedYear && (expenseDate.getMonth() + 1) === selectedMonth;
       });
-      setFilteredExpenses(filtered);
     }
-  }, [expenses, selectedMonth, selectedYear]);
+
+    // Then, filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(expense => {
+        const searchTermLower = searchTerm.toLowerCase();
+        return (
+          (expense.name && expense.name.toLowerCase().includes(searchTermLower)) ||
+          (expense.category && expense.category.toLowerCase().includes(searchTermLower)) ||
+          (expense.comments && expense.comments.toLowerCase().includes(searchTermLower))
+        );
+      });
+    }
+
+    // Filter by category
+    if (selectedCategories.length > 0) {
+        filtered = filtered.filter(expense => selectedCategories.includes(expense.category));
+    }
+
+    // Filter by date range
+    if (startDate && endDate) {
+        filtered = filtered.filter(expense => {
+            const expenseDate = new Date(expense.date);
+            return expenseDate >= new Date(startDate) && expenseDate <= new Date(endDate);
+        });
+    }
+
+    setFilteredExpenses(filtered);
+  }, [expenses, selectedMonth, selectedYear, searchTerm, selectedCategories, startDate, endDate]);
 
   const handleExpenseAdded = () => {
     fetchExpenses(); // Re-fetch expenses when a new one is added
@@ -153,6 +186,20 @@ const Dashboard = ({
   const handleExpenseDeleted = () => {
     fetchExpenses();
     handleCloseEditModal();
+  };
+
+  const handleOpenFilterModal = () => setIsFilterModalOpen(true);
+  const handleCloseFilterModal = () => setIsFilterModalOpen(false);
+
+  const handleApplyFilters = () => {
+      handleCloseFilterModal();
+  };
+
+  const handleClearFilters = () => {
+    setSelectedCategories([]);
+    setStartDate('');
+    setEndDate('');
+    handleCloseFilterModal();
   };
 
   return (
@@ -216,7 +263,19 @@ const Dashboard = ({
         </div>
         <div className="content-area"> {/* New wrapper for table and chart */}
           <div className="expenses-section">
-            <h2>Transactions (Month: {selectedMonth}/{selectedYear})</h2>
+            <div className="transactions-header">
+                <h2>Transactions (Month: {selectedMonth}/{selectedYear})</h2>
+                <div className="transactions-controls">
+                    <input 
+                        type="text"
+                        placeholder="Search..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="search-input"
+                    />
+                    <button className="filter-button" onClick={handleOpenFilterModal}>Filter</button>
+                </div>
+            </div>
             {loading && <div className="loading-placeholder"><p>Loading Expenses...</p></div>}
             {error && <p className="error-message">{error}</p>}
            <ExpenseTable expenses={filteredExpenses} onRowClick={handleOpenEditModal} />
@@ -239,6 +298,21 @@ const Dashboard = ({
           onDelete={handleExpenseDeleted}
           userId={currentUser?.uid}
           activeProfileCollectionName={activeProfile?.collectionName} // Pass for correct collection path
+        />
+      )}
+      {isFilterModalOpen && (
+        <FilterModal
+            isOpen={isFilterModalOpen}
+            onClose={handleCloseFilterModal}
+            categories={allCategories}
+            selectedCategories={selectedCategories}
+            setSelectedCategories={setSelectedCategories}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+            onApplyFilters={handleApplyFilters}
+            onClearFilters={handleClearFilters}
         />
       )}
       <div className="footer">

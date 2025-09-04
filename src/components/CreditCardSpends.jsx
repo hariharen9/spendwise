@@ -8,6 +8,7 @@ import { db } from '../firebaseConfig';
 import { collection, getDocs, query, orderBy, where, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import confetti from 'canvas-confetti'; // Optional: if you want confetti here too
 import '../styles/Dashboard.css'; // Main dashboard styles will be reused
+import FilterModal from './FilterModal';
 
 const CreditCardSpends = ({ currentUser }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -26,6 +27,13 @@ const CreditCardSpends = ({ currentUser }) => {
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedSpend, setSelectedSpend] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const allCategories = [...new Set(spends.map(e => e.category))];
 
   const fetchSpends = useCallback(async () => {
     if (!currentUser) return;
@@ -111,17 +119,58 @@ const CreditCardSpends = ({ currentUser }) => {
     }
   }, [currentUser, selectedMonth, selectedYear]);
 
-useEffect(() => {
-  if (!isCollapsed && currentUser) { // Only fetch if the component is expanded and user is available
-      fetchSpends();
-  }
-  // If collapsed, clear spends to avoid showing stale data if month/year changes while collapsed
-  // Or, keep them if you want to preserve the last viewed state.
-  // For now, let's not clear them to avoid re-fetch unless necessary.
-  // if (isCollapsed) {
-  //   setFilteredSpends([]); 
-  // }
-}, [fetchSpends, isCollapsed, currentUser, selectedMonth, selectedYear]); // Added currentUser, selectedMonth, selectedYear to ensure fetchSpends is called if these change while expanded
+  useEffect(() => {
+    let filtered = spends;
+
+    if (spends.length > 0) {
+        filtered = spends.filter(spend => {
+            if (!spend.transactionDate) {
+                return false;
+            }
+            let spendDate;
+            if (typeof spend.transactionDate === 'string') {
+                spendDate = new Date(spend.transactionDate);
+            } else if (spend.transactionDate && typeof spend.transactionDate.toDate === 'function') {
+                spendDate = spend.transactionDate.toDate();
+            }
+            if (!spendDate || isNaN(spendDate.getTime())) {
+                return false;
+            }
+            const spendMonth = spendDate.getMonth() + 1;
+            const spendYear = spendDate.getFullYear();
+            return spendMonth === selectedMonth && spendYear === selectedYear;
+        });
+    }
+
+    if (searchTerm) {
+        filtered = filtered.filter(spend => {
+            const searchTermLower = searchTerm.toLowerCase();
+            return (
+                (spend.name && spend.name.toLowerCase().includes(searchTermLower)) ||
+                (spend.category && spend.category.toLowerCase().includes(searchTermLower)) ||
+                (spend.comments && spend.comments.toLowerCase().includes(searchTermLower))
+            );
+        });
+    }
+
+    if (selectedCategories.length > 0) {
+        filtered = filtered.filter(spend => selectedCategories.includes(spend.category));
+    }
+
+    if (startDate && endDate) {
+        filtered = filtered.filter(spend => {
+            let spendDate;
+            if (typeof spend.transactionDate === 'string') {
+                spendDate = new Date(spend.transactionDate);
+            } else if (spend.transactionDate && typeof spend.transactionDate.toDate === 'function') {
+                spendDate = spend.transactionDate.toDate();
+            }
+            return spendDate >= new Date(startDate) && spendDate <= new Date(endDate);
+        });
+    }
+
+    setFilteredSpends(filtered);
+}, [spends, selectedMonth, selectedYear, searchTerm, selectedCategories, startDate, endDate]);
 
   const handleAddCreditCard = async (newCardName) => {
     if (!currentUser || !newCardName.trim()) return;
@@ -131,7 +180,6 @@ useEffect(() => {
         creditCards: arrayUnion(newCardName.trim())
       });
       setUserCreditCards(prev => [...prev, newCardName.trim()]);
-      // Optionally, re-fetch spends or user profile if needed, but arrayUnion should be fine for local state update
     } catch (error) {
       console.error("Error adding new credit card: ", error);
       setError('Failed to add new credit card.');
@@ -160,6 +208,20 @@ useEffect(() => {
   const handleSpendDeleted = () => {
     fetchSpends();
     handleCloseEditModal();
+  };
+
+  const handleOpenFilterModal = () => setIsFilterModalOpen(true);
+  const handleCloseFilterModal = () => setIsFilterModalOpen(false);
+
+  const handleApplyFilters = () => {
+      handleCloseFilterModal();
+  };
+
+  const handleClearFilters = () => {
+    setSelectedCategories([]);
+    setStartDate('');
+    setEndDate('');
+    handleCloseFilterModal();
   };
   
   const exportCreditCardSpendsToCSV = (spendsToExport) => {
@@ -208,18 +270,25 @@ useEffect(() => {
         <div className="credit-card-spends-content">
           <header className="dashboard-header cc-header-override">
             <div className="header-left">
-              {/* Optional: Title or welcome message specific to CC spends */}
-            </div>
-            <div className="header-right">
               <CreditCardMonthSelector 
                 selectedMonth={selectedMonth} 
                 setSelectedMonth={setSelectedMonth} 
                 selectedYear={selectedYear}
                 setSelectedYear={setSelectedYear}
               />
-              {currentUser && <button className="export-button" onClick={() => exportCreditCardSpendsToCSV(filteredSpends)}>
-                Export CC Spends
-              </button>}
+            </div>
+            <div className="header-right">
+                <input 
+                    type="text"
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="search-input"
+                />
+                <button className="filter-button" onClick={handleOpenFilterModal}>Filter</button>
+                {currentUser && <button className="export-button" onClick={() => exportCreditCardSpendsToCSV(filteredSpends)}>
+                    Export CC Spends
+                </button>}
             </div>
           </header>
           <main className="dashboard-main">
@@ -268,6 +337,21 @@ useEffect(() => {
               onSave={handleSpendUpdated}
               onDelete={handleSpendDeleted}
               userId={currentUser?.uid}
+            />
+          )}
+          {isFilterModalOpen && (
+            <FilterModal
+                isOpen={isFilterModalOpen}
+                onClose={handleCloseFilterModal}
+                categories={allCategories}
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+                startDate={startDate}
+                setStartDate={setStartDate}
+                endDate={endDate}
+                setEndDate={setEndDate}
+                onApplyFilters={handleApplyFilters}
+                onClearFilters={handleClearFilters}
             />
           )}
         </div>

@@ -1,0 +1,117 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content.filter-modal {
+  background: var(--card-bg);
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 600px;
+}
+
+.filter-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.filter-modal .modal-header h3 {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.filter-modal .close-button {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 2em;
+  cursor: pointer;
+}
+
+.filter-modal .filter-section {
+  margin-bottom: 20px;
+}
+
+.filter-modal .categories-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.filter-modal .category-item {
+  display: flex;
+  align-items: center;
+  background: var(--input-bg);
+  padding: 10px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.filter-modal .category-item.selected {
+  background: var(--primary-color);
+  color: white;
+}
+
+.filter-modal .category-item input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.filter-modal .date-range-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-modal .date-range-inputs input[type="date"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-family: var(--font-family);
+}
+
+.filter-modal .modal-actions {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.filter-modal .clear-button,
+.filter-modal .apply-button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: 1em;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.filter-modal .clear-button {
+  background: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--input-border);
+}
+
+.filter-modal .apply-button {
+  background: var(--primary-color);
+  color: white;
+}
