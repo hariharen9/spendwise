@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 const EditCreditCardSpendModal = ({ spend, onClose, onSave, onDelete, userId, userCreditCards = [], onAddCreditCard }) => {
   const [name, setName] = useState('');
@@ -73,10 +74,12 @@ const EditCreditCardSpendModal = ({ spend, onClose, onSave, onDelete, userId, us
         card,
         comments,
       });
+      toast.success('Credit card spend updated successfully!');
       onSave();
     } catch (err) {
       console.error('Error updating document: ', err);
       setError('Failed to update spend. Please try again.');
+      toast.error('Failed to update spend. Please try again.');
     }
   };
 
@@ -95,10 +98,12 @@ const EditCreditCardSpendModal = ({ spend, onClose, onSave, onDelete, userId, us
       try {
         const spendRef = doc(db, 'users', userId, 'creditCardSpends', spend.id);
         await deleteDoc(spendRef);
+        toast.success('Credit card spend deleted successfully!');
         onDelete();
       } catch (err) {
         console.error('Error deleting document: ', err);
         setError('Failed to delete spend. Please try again.');
+        toast.error('Failed to delete spend. Please try again.');
       }
     }
   };

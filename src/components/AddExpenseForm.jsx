@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 const AddExpenseForm = ({ onExpenseAdded, userId, activeProfileCollectionName }) => {
   const [name, setName] = useState('');
@@ -10,17 +11,6 @@ const AddExpenseForm = ({ onExpenseAdded, userId, activeProfileCollectionName })
   const [isIncome, setIsIncome] = useState(false); // false for expense, true for income
   const [comments, setComments] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  // New useEffect to hide success message after 3 seconds
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => {
-        setSuccess('');
-      }, 2000); // Hide after 2 seconds
-      return () => clearTimeout(timer); // Cleanup timer on component unmount or if success changes
-    }
-  }, [success]);
 
   const [categories, setCategories] = useState(['Food', 'Home', 'Transport', 'Utilities', 'Entertainment', 'Health', 'Shopping','Fuel', 'Investments', 'EMI', 'Others']);
   
@@ -37,7 +27,6 @@ const AddExpenseForm = ({ onExpenseAdded, userId, activeProfileCollectionName })
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
 
     if (!userId) { // Check if userId is available
       setError('User not authenticated. Please log in again.');
@@ -72,7 +61,7 @@ const AddExpenseForm = ({ onExpenseAdded, userId, activeProfileCollectionName })
         comments,
         createdAt: serverTimestamp() // Optional: for sorting by creation time
       });
-      setSuccess('Expense added successfully!');
+      toast.success('Expense added successfully!');
       // Save custom category if it's new
       if (showCustomInput && !categories.includes(customCategory)) {
         const updatedCategories = [...categories, customCategory];
@@ -93,6 +82,7 @@ const AddExpenseForm = ({ onExpenseAdded, userId, activeProfileCollectionName })
     } catch (err) {
       console.error("Error adding document: ", err);
       setError('Failed to add expense. Please try again.');
+      toast.error('Failed to add expense. Please try again.');
     }
   };
 
@@ -100,13 +90,6 @@ const AddExpenseForm = ({ onExpenseAdded, userId, activeProfileCollectionName })
     <div className="add-expense-form-container">
       <h3>Add Transaction</h3>
       {error && <p className="error-message">{error}</p>}
-      {success && (
-        <div className="modal-overlay">
-          <div className="modal-content success-modal">
-            <p>{success}</p>
-          </div>
-        </div>
-      )}
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="name">Name:</label>

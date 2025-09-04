@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 const EditExpenseModal = ({ expense, onClose, onSave, onDelete, userId, activeProfileCollectionName }) => {
   const [name, setName] = useState('');
@@ -71,10 +72,12 @@ const EditExpenseModal = ({ expense, onClose, onSave, onDelete, userId, activePr
         category,
         comments,
       });
+      toast.success('Expense updated successfully!');
       onSave(); // Callback to refresh data and close modal
     } catch (err) {
       console.error('Error updating document: ', err);
       setError('Failed to update expense. Please try again.');
+      toast.error('Failed to update expense. Please try again.');
     }
   };
 
@@ -98,10 +101,12 @@ const EditExpenseModal = ({ expense, onClose, onSave, onDelete, userId, activePr
         const docPath = `users/${userId}/${activeProfileCollectionName}/${expense.id}`;
         const expenseRef = doc(db, docPath);
         await deleteDoc(expenseRef);
+        toast.success('Expense deleted successfully!');
         onDelete(); // Callback to refresh data and close modal
       } catch (err) {
         console.error('Error deleting document: ', err);
         setError('Failed to delete expense. Please try again.');
+        toast.error('Failed to delete expense. Please try again.');
       }
     }
   };

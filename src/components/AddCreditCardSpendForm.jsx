@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 const AddCreditCardSpendForm = ({ onSpendAdded, userId, userCreditCards = [], onAddCreditCard }) => {
   const [name, setName] = useState('');
@@ -10,16 +11,6 @@ const AddCreditCardSpendForm = ({ onSpendAdded, userId, userCreditCards = [], on
   const [card, setCard] = useState(''); // Credit card used
   const [comments, setComments] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => {
-        setSuccess('');
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [success]);
 
   const [categories, setCategories] = useState(['Bills', 'EMI', 'Shopping', 'Travel', 'Food', 'Entertainment', 'Health', 'Others']);
   const [customCategory, setCustomCategory] = useState('');
@@ -49,7 +40,6 @@ const AddCreditCardSpendForm = ({ onSpendAdded, userId, userCreditCards = [], on
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
 
     if (!userId) {
       setError('User not authenticated. Please log in again.');
@@ -79,7 +69,7 @@ const AddCreditCardSpendForm = ({ onSpendAdded, userId, userCreditCards = [], on
         comments,
         createdAt: serverTimestamp()
       });
-      setSuccess('Credit card spend added successfully!');
+      toast.success('Credit card spend added successfully!');
       
       if (showCustomInput && !categories.includes(customCategory)) {
         const updatedCategories = [...categories, customCategory];
@@ -102,6 +92,7 @@ const AddCreditCardSpendForm = ({ onSpendAdded, userId, userCreditCards = [], on
     } catch (err) {
       console.error("Error adding document: ", err);
       setError('Failed to add credit card spend. Please try again.');
+      toast.error('Failed to add credit card spend. Please try again.');
     }
   };
 
@@ -109,13 +100,6 @@ const AddCreditCardSpendForm = ({ onSpendAdded, userId, userCreditCards = [], on
     <div className="add-expense-form-container credit-card-form-container">
       <h4>Add Credit Card Spend</h4>
       {error && <p className="error-message">{error}</p>}
-      {success && (
-        <div className="modal-overlay">
-          <div className="modal-content success-modal">
-            <p>{success}</p>
-          </div>
-        </div>
-      )}
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="cc-name">Name / Description:</label>
